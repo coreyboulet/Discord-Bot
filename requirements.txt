@@ -1,2 +1,2 @@
-Discord==1.0.0
+Discord==0.0.2
 Asyncio==18.5.3
