@@ -30,9 +30,8 @@ async def on_ready():
 @client.command()
 async def ping(*args):
 
-	await client.say(":ping_pong: Pong!")
-	await asyncio.sleep(3)
-	await client.say(":warning: This bot was created by **Habchy#1665**, it seems that you have not modified it yet. Go edit the file and try it out!")
+	await client.say(":ping_pong: BAM!")
+
 # After you have modified the code, feel free to delete the line above so it does not keep popping up everytime you initiate the ping commmand.
 	
 client.run("NDM4MTQ3NDYwMTY3MjM3NjMy.DcAaJg.31OKg8BukGc992dAiBUSfTlCiho")
@@ -45,5 +44,3 @@ client.run("NDM4MTQ3NDYwMTY3MjM3NjMy.DcAaJg.31OKg8BukGc992dAiBUSfTlCiho")
 
 # The help command is currently set to be not be Direct Messaged.
 # If you would like to change that, change "pm_help = False" to "pm_help = True" on line 9.
-
-input('Press ENTER to exit')
