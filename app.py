@@ -35,7 +35,7 @@ async def ping(*args):
 	await client.say(":warning: This bot was created by **Habchy#6969**, it seems that you have not modified it yet. Go edit the file and try it out!")
 # After you have modified the code, feel free to delete the line above so it does not keep popping up everytime you initiate the ping commmand.
 	
-client.run(BOTTOKEN)
+client.run('BOTTOKEN')
 
 # Basic Bot was created by Habchy#1665
 # Please join this Discord server if you need help: https://discord.gg/FNNNgqb
