@@ -1,55 +1,22 @@
-# These are the dependecies. The bot depends on these to function, hence the name. Please do not change these unless your adding to them, because they can break the bot.
 import discord
 import asyncio
 from discord.ext.commands import Bot
 from discord.ext import commands
 import platform
 import os
-
-# Here you can modify the bot's prefix and description and wether it sends help in direct messages or not.
-"""client = Bot(description="Basic Bot by Habchy#1665", command_prefix="!", pm_help = False)
-
-# This is what happens everytime the bot launches. In this case, it prints information like server count, user count the bot is connected to, and the bot id in the console.
-# Do not mess with it because the bot can break, if you wish to do so, please consult me or someone trusted.
+import re
 
 
-@client.event
-async def on_ready():
-	print('Logged in as '+client.user.name+' (ID:'+client.user.id+') | Connected to '+str(len(client.servers))+' servers | Connected to '+str(len(set(client.get_all_members())))+' users')
-	print('--------')
-	print('Current Discord.py Version: {} | Current Python Version: {}'.format(discord.__version__, platform.python_version()))
-	print('--------')
-	print('Use this link to invite {}:'.format(client.user.name))
-	print('https://discordapp.com/oauth2/authorize?client_id={}&scope=bot&permissions=8'.format(client.user.id))
-	print('--------')
-	print('Support Discord Server: https://discord.gg/FNNNgqb')
-	print('Github Link: https://github.com/Habchy/BasicBot')
-	print('--------')
-	print('You are running BasicBot v2.1') #Do not change this. This will really help us support you, if you need support.
-	print('Created by Habchy#1665')
-	return await client.change_presence(game=discord.Game(name='PLAYING STATUS HERE')) #This is buggy, let us know if it doesn't work.
 
-# This is a basic example of a call and response command. You tell it do "this" and it does it.
-@client.command()
-async def ping(*args):
+#import test for the googlespreadsheet
+import gspread
+from oauth2client.service_account import ServiceAccountCredentials
+scope=['https://spreadsheets.google.com/feeds','https://www.googleapis.com/auth/drive']
+creds= ServiceAccountCredentials.from_json_keyfile_name('client_secret.json', scope)
+client = gspread.authorize(creds)
+sheet=client.open('GroupMeBot').worksheet("discordbot")
 
-	await client.say(":ping_pong: pouf!")
-	await client.say(":ping_pong: coucou")
-#	await asyncio.sleep(3)
-#	await client.say(":warning: This bot was created by **Habchy#6969**, it seems that you have not modified it yet. Go edit the file and try it out!")
-# After you have modified the code, feel free to delete the line above so it does not keep popping up everytime you initiate the ping commmand.
-	
-client.run(os.getenv('BOTTOKEN'))
 
-# Basic Bot was created by Habchy#1665
-# Please join this Discord server if you need help: https://discord.gg/FNNNgqb
-# Please modify the parts of the code where it asks you to. Example: The Prefix or The Bot Token
-# This is by no means a full bot, it's more of a starter to show you what the python language can do in Discord.
-# Thank you for using this and don't forget to star my repo on GitHub! [Repo Link: https://github.com/Habchy/BasicBot]
-
-# The help command is currently set to be not be Direct Messaged.
-# If you would like to change that, change "pm_help = False" to "pm_help = True" on line 9.
-"""
 
 TOKEN = os.getenv('BOTTOKEN')
 
@@ -57,13 +24,39 @@ client = discord.Client()
 
 @client.event
 async def on_message(message):
+  
+  	#Put it in lower to be sure caps dont matter
+    inmess=message.content.lower()
+
     # we do not want the bot to reply to itself
     if message.author == client.user:
         return
 
-    if message.content.startswith('!hello'):
-        msg = 'Hello {0.author.mention}'.format(message)
-        await client.send_message(message.channel, msg)
+    #here i split the messages in string so we checked if they are names for raids in the dedicated sheet.
+    strings=inmess.split()
+    text=""
+    for string in strings:
+    	try:
+    		if sheet.find(string):
+    			ref = sheet.find(string)
+    			row = ref.row
+    			output = sheet.cell(row,2).value
+    		text= text + " " + output
+    	#this is to avoid the formula to crash when the word is not in the excel list
+    	except:
+    		pass	
+    #Here I'm looking for something that looks like a time xx:xx or x:xx
+    searchtime=re.findall(r'\d{1,2}\S\d{1,2}', inmess)
+    #I'm takin the first (and probably only time in the list created)
+    time=searchtime[0]
+    finaltext= " {0.author.mention} announced ".format(message) + text +" at " + time +" who's in ?"
+    await client.send_message(client.get_channel('426815579891040258'), finaltext)
+
+
+
+
+
+        
 
 @client.event
 async def on_ready():
